@@ -149,13 +149,13 @@ namespace TexturePacker
     public int GetMaximumDestinationX()
     {
       return this.TotalHorizontalRepeats > 1
-        ? (this.TotalHorizontalRepeats * (this.DestinationX - this.OriginX)) + this.OriginX
+        ? (this.TotalHorizontalRepeats * (this.DestinationX - this.OriginX + 1)) + this.OriginX
         : this.DestinationX;
     }
     public int GetMaximumDestinationY()
     {
       return this.TotalVerticalRepeats > 1
-        ? (this.TotalVerticalRepeats * (this.DestinationY - this.OriginY)) + this.OriginY
+        ? (this.TotalVerticalRepeats * (this.DestinationY - this.OriginY + 1)) + this.OriginY
         : this.DestinationY;
     }
 
@@ -167,15 +167,15 @@ namespace TexturePacker
           && this.TotalVerticalRepeats <= 1)
       {
         return MagicStrings.PLIST_ITEM_XML
-          .Replace("<<frameName>>", this.Name ?? "undefined")
+          .Replace("<<frameName>>", "_" + this.Index + "_" + (this.Name ?? "undefined"))
           .Replace("<<x>>", this.OriginX.ToString())
           .Replace("<<y>>", this.OriginY.ToString())
-          .Replace("<<width>>", (this.DestinationX - this.OriginX).ToString())
-          .Replace("<<height>>", (this.DestinationY - this.OriginY).ToString())
+          .Replace("<<width>>", (this.DestinationX - this.OriginX + 1).ToString())
+          .Replace("<<height>>", (this.DestinationY - this.OriginY + 1).ToString())
           .Replace("<<offsetX>>", "0")
           .Replace("<<offsetY>>", "0")
-          .Replace("<<originalWidth>>", (this.DestinationX - this.OriginX).ToString())
-          .Replace("<<originalHeight>>", "-" + (this.DestinationY - this.OriginY).ToString())
+          .Replace("<<originalWidth>>", (this.DestinationX - this.OriginX + 1).ToString())
+          .Replace("<<originalHeight>>", "-" + (this.DestinationY - this.OriginY + 1).ToString())
           .Replace("<<rotate>>", this.Rotate ? "true" : "false");
       }
       else
@@ -192,14 +192,14 @@ namespace TexturePacker
         {
           sb.AppendLine(MagicStrings.PLIST_ITEM_XML
           .Replace("<<frameName>>", (this.Name ?? "undefined") + "_" + i.ToString(numberFormat))
-          .Replace("<<x>>", (this.OriginX + ((this.DestinationX - this.OriginX) * i)).ToString())
+          .Replace("<<x>>", (this.OriginX + ((this.DestinationX - this.OriginX + 1) * i)).ToString())
           .Replace("<<y>>", this.OriginY.ToString())
-          .Replace("<<width>>", (this.DestinationX - this.OriginX).ToString())
-          .Replace("<<height>>", (this.DestinationY - this.OriginY).ToString())
+          .Replace("<<width>>", (this.DestinationX - this.OriginX + 1).ToString())
+          .Replace("<<height>>", (this.DestinationY - this.OriginY + 1).ToString())
           .Replace("<<offsetX>>", "0")
           .Replace("<<offsetY>>", "0")
-          .Replace("<<originalWidth>>", (this.DestinationX - this.OriginX).ToString())
-          .Replace("<<originalHeight>>", "-" + (this.DestinationY - this.OriginY).ToString())
+          .Replace("<<originalWidth>>", (this.DestinationX - this.OriginX + 1).ToString())
+          .Replace("<<originalHeight>>", "-" + (this.DestinationY - this.OriginY + 1).ToString())
           .Replace("<<rotate>>", this.Rotate ? "true" : "false"));
         }
 
@@ -213,13 +213,13 @@ namespace TexturePacker
           sb.AppendLine(MagicStrings.PLIST_ITEM_XML
           .Replace("<<frameName>>", (this.Name ?? "undefined") + "_" + i.ToString(numberFormat))
           .Replace("<<x>>", this.OriginX.ToString())
-          .Replace("<<x>>", (this.OriginY + ((this.DestinationY - this.OriginY) * i)).ToString())
-          .Replace("<<width>>", (this.DestinationX - this.OriginX).ToString())
-          .Replace("<<height>>", (this.DestinationY - this.OriginY).ToString())
+          .Replace("<<x>>", (this.OriginY + ((this.DestinationY - this.OriginY + 1) * i)).ToString())
+          .Replace("<<width>>", (this.DestinationX - this.OriginX + 1).ToString())
+          .Replace("<<height>>", (this.DestinationY - this.OriginY + 1).ToString())
           .Replace("<<offsetX>>", "0")
           .Replace("<<offsetY>>", "0")
-          .Replace("<<originalWidth>>", (this.DestinationX - this.OriginX).ToString())
-          .Replace("<<originalHeight>>", "-" + (this.DestinationY - this.OriginY).ToString())
+          .Replace("<<originalWidth>>", (this.DestinationX - this.OriginX + 1).ToString())
+          .Replace("<<originalHeight>>", "-" + (this.DestinationY - this.OriginY + 1).ToString())
           .Replace("<<rotate>>", this.Rotate ? "true" : "false"));
         }
 

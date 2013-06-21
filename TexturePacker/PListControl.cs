@@ -95,8 +95,8 @@ namespace TexturePacker
       }
 
       this.txtPListOutput.Text = MagicStrings.PLIST_XML
-                                             .Replace("<<OverallWidth>>", maxX.ToString())
-                                             .Replace("<<OverallHeight>>", maxY.ToString())
+                                             .Replace("<<OverallWidth>>", (maxX + 1).ToString())
+                                             .Replace("<<OverallHeight>>", (maxY + 1).ToString())
                                              .Replace("<<Frames>>", sb.ToString());
 
       RefreshIndexes();
