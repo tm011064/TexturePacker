@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using System.Xml.Linq;
 
 namespace TexturePacker
 {
@@ -62,6 +63,10 @@ namespace TexturePacker
 
     private void AddNewTabPage()
     {
+      AddNewTabPage(null);
+    }
+    private void AddNewTabPage(IEnumerable<PListDefinition> definitions)
+    {
       TabPage tabPage;
 
       _NewTabPageCounter++;
@@ -70,6 +75,11 @@ namespace TexturePacker
       tabPage = new TabPage(header);
 
       PListControl control = new PListControl(tabKey);
+      if (definitions != null)
+      {
+        control.Update(definitions);
+      }
+
       control.Dock = DockStyle.Fill;
 
       control.Saved += new EventHandler<EventArgs>(control_Saved);
@@ -265,6 +275,80 @@ namespace TexturePacker
     private void newToolStripMenuItem_Click(object sender, EventArgs e)
     {
       this.AddNewTabPage();
+    }
+
+    private void loadFromPListMenuItem_Click(object sender, EventArgs e)
+    {
+      using (OpenFileDialog openFileDialog = new OpenFileDialog())
+      {
+        openFileDialog.Filter = "Texture Packer Definition (*.plist)|*.plist";
+        openFileDialog.Multiselect = true;
+        switch (openFileDialog.ShowDialog())
+        {
+          case DialogResult.OK:
+
+            foreach (string fileName in openFileDialog.FileNames)
+            {
+              FileInfo fileInfo = new FileInfo(fileName);
+              if (fileInfo.Exists)
+              {
+                string content = File.ReadAllText(fileInfo.FullName);
+                content = content.Remove(0, content.IndexOf("<plist"));
+                XElement doc = XElement.Parse(content);
+
+                XElement keyElement;
+                XElement valueElement;
+                PListDefinition definition;
+                List<PListDefinition> definitions = new List<PListDefinition>();
+                int index = 0;
+
+                try
+                {
+                  foreach (var dictElement in doc.Descendants("dict"))
+                  {
+                    keyElement = dictElement.PreviousNode as XElement;
+
+                    if (keyElement != null
+                        && keyElement.Name == "key"
+                        && keyElement.Value != "texture"
+                        && keyElement.Value != "frames")
+                    {
+                      definition = new PListDefinition(keyElement.Value);
+                      definition.Index = index++;
+
+                      foreach (var definitionKeyElement in dictElement.Elements("key"))
+                      {
+                        valueElement = definitionKeyElement.NextNode as XElement;
+                        if (valueElement != null)
+                        {
+                          switch (definitionKeyElement.Value)
+                          {
+                            case "x": definition.OriginX = int.Parse(valueElement.Value.Trim()); break;
+                            case "y": definition.OriginY = int.Parse(valueElement.Value.Trim()); break;
+                            case "width": definition.DestinationX = definition.OriginX - 1 + int.Parse(valueElement.Value.Trim()); break;
+                            case "height": definition.DestinationY = definition.OriginY - 1 + int.Parse(valueElement.Value.Trim()); break;
+                            case "rotate": definition.Rotate = string.Compare(valueElement.Name.LocalName, "true", true) == 0; break;
+                          }
+                        }
+                      }
+
+                      definitions.Add(definition);
+                    }
+                  }
+
+                  AddNewTabPage(definitions);
+                }
+                catch (Exception ex)
+                {
+                  MessageBox.Show(ex.Message);
+                  return;
+                }
+              }
+            }
+            break;
+        }
+
+      }
     }
   }
 }

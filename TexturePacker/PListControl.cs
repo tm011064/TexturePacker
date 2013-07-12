@@ -58,6 +58,7 @@ namespace TexturePacker
         this._PListDefinitions.Add(definition);
       }
       RefreshIndexes();
+      Refresh();
     }
 
     private void RefreshIndexes()

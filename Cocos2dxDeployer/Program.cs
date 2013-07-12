@@ -36,17 +36,30 @@ $(call import-module,extensions)
 
     static void Main(string[] args)
     {
+      Random random = new Random();
+      RandomStringGenerator randomStringGenerator = new RandomStringGenerator();
+      while (Console.ReadKey().Key != ConsoleKey.Enter)
+      {
+        Console.Clear();
+        foreach (string s in randomStringGenerator.GenerateRandomString(10, 4, 6, .45))
+          Console.WriteLine(s);
+      }
+      return;
+
       UpdateAndroidMakeFile(
-        @"C:\android\dev\cocos2d-2.1beta3-x-2.1.1\Mulongo\proj.win32\"
-        , @"C:\android\dev\cocos2d-2.1beta3-x-2.1.1\ColorMemoryProject\Classes\"
-        , @"C:\android\dev\cocos2d-2.1beta3-x-2.1.1\ColorMemoryProject\proj.android\jni\Android.mk");
+        @"C:\GIT\android\cocos2d-2.1beta3-x-2.1.1\cocos2d-2.1beta3-x-2.1.1\Mulongo\proj.win32\"
+        , @"C:\GIT\android\cocos2d-2.1beta3-x-2.1.1\cocos2d-2.1beta3-x-2.1.1\MulongoProject\Classes\"
+        , @"C:\GIT\android\cocos2d-2.1beta3-x-2.1.1\cocos2d-2.1beta3-x-2.1.1\MulongoProject\proj.android\jni\Android.mk"
+        , @"C:\GIT\android\cocos2d-2.1beta3-x-2.1.1\cocos2d-2.1beta3-x-2.1.1\Mulongo\Resources\"
+        , @"C:\GIT\android\cocos2d-2.1beta3-x-2.1.1\cocos2d-2.1beta3-x-2.1.1\MulongoProject\Resources\");
 
       Console.WriteLine("\nALL DONE :)");
 
       Console.ReadLine();
     }
 
-    static void UpdateAndroidMakeFile(string classesSourcePath, string classesDestinationPath, string androidMakePath)
+    static void UpdateAndroidMakeFile(string classesSourcePath, string classesDestinationPath, string androidMakePath
+      , string resourceFolderSourcePath, string resourceFolderDestinationPath)
     {
       DirectoryInfo sourceDirectoryInfo = new DirectoryInfo(classesSourcePath);
       DirectoryInfo destinationDirectoryInfo = new DirectoryInfo(classesDestinationPath);
@@ -66,6 +79,19 @@ $(call import-module,extensions)
         foreach (FileInfo fileInfo in destinationDirectoryInfo.GetFiles())
           destinationFileInfos[fileInfo.Name] = fileInfo;
       }
+
+      #region resources
+      //Now Create all of the directories
+      foreach (string dirPath in Directory.GetDirectories(resourceFolderSourcePath, "*",
+          SearchOption.AllDirectories))
+        Directory.CreateDirectory(dirPath.Replace(resourceFolderSourcePath, resourceFolderDestinationPath));
+
+      //Copy all the files
+      foreach (string newPath in Directory.GetFiles(resourceFolderSourcePath, "*.*",
+          SearchOption.AllDirectories))
+        File.Copy(newPath, newPath.Replace(resourceFolderSourcePath, resourceFolderDestinationPath), true);
+      #endregion
+
 
       StringBuilder sb = new StringBuilder();
       FileInfo fi;

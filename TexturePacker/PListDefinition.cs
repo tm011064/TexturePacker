@@ -167,7 +167,7 @@ namespace TexturePacker
           && this.TotalVerticalRepeats <= 1)
       {
         return MagicStrings.PLIST_ITEM_XML
-          .Replace("<<frameName>>", "_" + this.Index + "_" + (this.Name ?? "undefined"))
+          .Replace("<<frameName>>", (this.Name ?? "undefined"))
           .Replace("<<x>>", this.OriginX.ToString())
           .Replace("<<y>>", this.OriginY.ToString())
           .Replace("<<width>>", (this.DestinationX - this.OriginX + 1).ToString())
