@@ -43,6 +43,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DeployerConfig.cs" />
+    <Compile Include="FileDeployer.cs" />
+    <Compile Include="FileNameSetter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RandomStringGenerator.cs" />
